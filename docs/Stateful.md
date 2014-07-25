@@ -32,7 +32,7 @@ Application code can observe changes to the instance properties using `.observe(
 myWidget.observe(function (oldVals) {
 	Object.keys(oldVals).forEach(function (prop) {
 		console.log(prop + "  changed from " + oldVals[prop] + " to " + this[prop]);
-	});
+	}, this);
 });
 ```
 
