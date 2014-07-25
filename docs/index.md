@@ -14,7 +14,7 @@ The decor project contains some classes and utilities that are not directly rela
 
 ## Other classes
 
-* [Destroyable](Destroyable.md)
+* [Destroyable](Destroyable.md) - Base class to track handles and release them when the instance is destroyed.
 * [Evented](Evented.md)
 * schedule (TODO)
 * [sniff](sniff.md)
