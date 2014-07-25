@@ -6,10 +6,9 @@ title: decor/Evented
 # decor/Evented
 
 **decor/Evented** is a base class for classes that emit their own events, even if those classes have nothing
-to do with the DOM.  It also provides an easy way to allow
-those events to be connected to by downstream users.
+to do with the DOM.  It also provides an easy way for applications to monitor those events.
 
-The structure of the event that is passed on the emit is up to the
+The structure of the event that is emitted is up to the
 developer, but it should be consistent and easy to understand.
 
 ## Usage
