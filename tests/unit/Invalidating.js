@@ -94,6 +94,19 @@ define([
 			invalidating.deliverComputing();
 			finishedMicrotask = true;
 		},
+		"automatic deliver of constructor args": function () {
+			var invalidating = new (dcl([Invalidating], {
+				foo: undefined,
+				bar: undefined,
+				refreshRendering: function (oldValues) {
+					this.refreshed = oldValues;
+				}
+			}))({
+				foo: "Foo0",
+				bar: "Bar0"
+			});
+			assert.deepEqual(invalidating.refreshed, {foo: "Foo0", bar: "Bar0"});
+		},
 		"Discard changes": function () {
 			var dfd = this.async(1000),
 				invalidating = new (dcl([Invalidating], {

@@ -12,6 +12,7 @@ define([
 	var Invalidating = dcl([Stateful, Destroyable], /** @lends module:decor/Invalidating# */ {
 		constructor: dcl.after(function () {
 			this.initializeInvalidating();
+			this.deliver();
 		}),
 
 		/**
@@ -82,7 +83,13 @@ define([
 		 * @param {Object} newValues The hash table of new property values, keyed by property names.
 		 * @param {Object} oldValues The hash table of old property values, keyed by property names.
 		 */
-		refreshRendering: function () {}
+		refreshRendering: function () {},
+
+		processConstructorParameters: dcl.superCall(function (sup) {
+			return function (args) {
+				sup.apply(this, arguments);
+			};
+		})
 	});
 
 	dcl.chainAfter(Invalidating, "computeProperties");
