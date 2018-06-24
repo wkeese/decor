@@ -89,28 +89,31 @@ define([
 		 */
 		introspect: function (props) {
 			Object.keys(props).forEach(function (prop) {
+				if (!props.hasOwnProperty(prop)) {
+					return;
+				}
+
 				var names = propNames(prop),
 					shadowProp = names.p,
 					getter = names.g,
 					setter = names.s;
 
-				// Setup ES5 getter and setter for this property, if not already setup.
+				// Setup ES5 getter and setter for this property.
 				// For a property named foo, saves raw value in _fooAttr.
 				// ES5 setter intentionally does late checking for this[names.s] in case a subclass sets up a
 				// _setFooAttr method.
-				if (!(shadowProp in this)) {
-					this[shadowProp] = this[prop];
-					delete this[prop]; // make sure custom setters fire
-					Object.defineProperty(this, prop, {
-						enumerable: true,
-						set: function (x) {
-							setter in this ? this[setter](x) : this._set(prop, x);
-						},
-						get: function () {
-							return getter in this ? this[getter]() : this[shadowProp];
-						}
-					});
-				}
+				this[shadowProp] = this[prop];
+				delete this[prop]; // make sure custom setters fire
+				Object.defineProperty(this, prop, {
+					enumerable: true,
+					configurable: true,
+					set: function (x) {
+						setter in this ? this[setter](x) : this._set(prop, x);
+					},
+					get: function () {
+						return getter in this ? this[getter]() : this[shadowProp];
+					}
+				});
 			}, this);
 		},
 
