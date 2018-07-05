@@ -59,7 +59,9 @@ define([
 	 *
 	 * @mixin module:decor/Stateful
 	 */
-	var Stateful = dcl(null, /** @lends module:decor/Stateful# */ {
+	var Stateful = dcl(/** @lends module:decor/Stateful# */ {
+		declaredClass: "decor/Stateful",
+
 		/**
 		 * Stop instrumentation when we hit traverse the prototype chain down to the
 		 * object containing this property.
