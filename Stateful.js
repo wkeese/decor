@@ -26,6 +26,9 @@ define([
 		return ret;
 	}
 
+	// Track which objects have been introspected already.
+	var instrumentedObjects = new WeakMap();
+
 	/**
 	 * Base class for objects that provide named properties with optional getter/setter
 	 * control and the ability to observe for property changes.
@@ -62,10 +65,7 @@ define([
 	var Stateful = dcl(/** @lends module:decor/Stateful# */ {
 		declaredClass: "decor/Stateful",
 
-		/**
-		 * Stop instrumentation when we hit traverse the prototype chain down to the
-		 * object containing this property.
-		 */
+		// Flag used by instrument()
 		_isStatefulSuperclass: true,
 
 		/**
@@ -73,17 +73,20 @@ define([
 		 * @protected
 		 */
 		instrument: function () {
-			var proto = Object.getPrototypeOf(this);
+			// Instrument all objects in the prototype chain excluding a base class of HTMLElement, i.e. all objects
+			// up to and including the one with the _isStatefulSuperclass flag.
+			// Note: must instrument the object with the _isStatefulSuperclass flag because it might not just be
+			// Stateful, but a mixture of Stateful properties with other classes' properties, due to complexities of
+			// how dcl() handles multiple inheritance and also complications from having HTMLElement (or any non-dcl
+			// class?) in the prototype chain.
+			var proto = this;
 			do {
-				if (!proto.hasOwnProperty("_instrumented")) {
-					this.instrumentObject(proto);
-					Object.defineProperty(proto, "_instrumented", {
-						value: true,
-						enumerable: false
-					});
-				}
 				proto = Object.getPrototypeOf(proto);
-			} while (proto && !proto.hasOwnProperty("_isStatefulSuperclass"));
+				if (!instrumentedObjects.has(proto)) {
+					this.instrumentObject(proto);
+					instrumentedObjects.set(proto, true);
+				}
+			} while (!proto.hasOwnProperty("_isStatefulSuperclass"));
 		},
 
 		/**
