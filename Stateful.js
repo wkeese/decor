@@ -30,18 +30,11 @@ define([
 	var instrumentedObjects = new WeakMap();
 
 	/**
-	 * Base class for objects that provide named properties with optional getter/setter
-	 * control and the ability to observe for property changes.
+	 * Base class for objects that provide named properties with the ability to observe for property changes.
+	 * Note though that expando properties (i.e. properties added to an instance but not in the prototype) are not
+	 * observable for changes.
 	 *
-	 * The class also provides the functionality to auto-magically manage getters
-	 * and setters for class attributes/properties.  Note though that expando properties
-	 * (i.e. properties added to an instance but not in the prototype) are not supported.
-	 *
-	 * Getters and Setters should follow the format of `_setXxxAttr` or `_getXxxAttr` where
-	 * the xxx is a name of the attribute to handle.  So an attribute of `foo`
-	 * would have a custom getter of `_getFooAttr` and a custom setter of `_setFooAttr`.
-	 * Setters must save and announce the new property value by calling `this._set("foo", val)`,
-	 * and getters should access the property value as `this._get("foo")`.
+	 * Also has _set() and _get methods for helping to write custom accessors.
 	 *
 	 * @example <caption>Example 1</caption>
 	 * var MyClass = dcl(Stateful, { foo: "initial" });
@@ -52,9 +45,9 @@ define([
 	 *    }
 	 * });
 	 * obj.foo = bar;
-	 * // Stateful by default interprets the first parameter passed to
-	 * // the constructor as a set of properties to set on the widget
-	 * // immediately after it is created.
+	 *
+	 * Stateful by default interprets the first parameter passed to the constructor as a set of properties to
+	 * mix in to the instance immediately after it is created:
 	 *
 	 * @example <caption>Example 2</caption>
 	 * var MyClass = dcl(Stateful, { foo: "initial" });
